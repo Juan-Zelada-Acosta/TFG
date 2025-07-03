@@ -1,0 +1,42 @@
+@extends('layout')
+
+@section('titulo', 'Contacto')
+
+@section('contenido')
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <h2 class="text-center mb-4 text-blue">¿Necesitas ayuda?</h2>
+            <p class="text-center mb-4">
+                Estamos aquí para responder tus dudas, resolver problemas o simplemente escucharte. Rellena el formulario y te responderemos lo antes posible.
+            </p>
+
+            <form id="formContacto" method="POST" action="index.php?accion=enviarContacto">
+                <div class="mb-3">
+                    <label for="correo" class="form-label">Tu correo electrónico</label>
+                    <input type="email" class="form-control" id="correo" name="correo" required>
+                </div>
+                <div class="mb-3">
+                    <label for="mensaje" class="form-label">Tu mensaje</label>
+                    <textarea class="form-control" id="mensaje" name="mensaje" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Enviar consulta</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@if (isset($_GET['exito']) && $_GET['exito'] === '1')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Swal.fire({
+                title: '¡Consulta enviada!',
+                text: 'Gracias por escribirnos. Te responderemos lo antes posible.',
+                icon: 'success',
+                confirmButtonColor: '#0085B4'
+            });
+        });
+    </script>
+@endif
+@endsection

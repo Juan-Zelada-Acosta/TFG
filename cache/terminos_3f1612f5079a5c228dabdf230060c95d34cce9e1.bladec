@@ -1,0 +1,35 @@
+<?php $_shouldextend[1]=1; ?>
+
+<?php $this->startSection('titulo', 'Términos y Condiciones'); ?>
+
+<?php $this->startSection('contenido'); ?>
+<div class="container py-5">
+ <div class="row justify-content-center">
+ <div class="col-12 col-md-8 col-lg-6 text-justify">
+ <h2 class="text-center mb-4 text-blue">Términos y Condiciones</h2>
+
+ <p class="mb-4">
+ Las presentes condiciones regulan el uso del sitio web <strong>Stillwear</strong>, así como la compraventa de productos ofrecidos a través del mismo. Al realizar un pedido, el usuario acepta íntegramente estos términos y condiciones.
+ </p>
+
+ <p class="mb-4">
+ Todos los precios están indicados en euros (€) e incluyen el Impuesto sobre el Valor Añadido (IVA) vigente. Stillwear se reserva el derecho de modificar los precios en cualquier momento, respetando siempre el importe confirmado en el momento de la compra.
+ </p>
+
+ <p class="mb-4">
+ Todos los pedidos están sujetos a disponibilidad de stock. En caso de que un producto no se encuentre disponible tras la realización del pedido, nos comprometemos a informarte a la mayor brevedad y a reembolsarte la cantidad correspondiente.
+ </p>
+
+ <p class="mb-4">
+ El pago de los productos podrá realizarse mediante tarjeta de crédito, débito u otras formas habilitadas en la tienda. Stillwear garantiza la confidencialidad y seguridad de los datos personales y bancarios introducidos por el usuario mediante protocolos de cifrado y medidas de seguridad avanzadas.
+ </p>
+
+ <p class="mb-4">
+ Stillwear se reserva el derecho de actualizar o modificar en cualquier momento las presentes condiciones sin necesidad de previo aviso. Se recomienda al usuario revisarlas antes de efectuar cualquier compra.
+ </p>
+ </div>
+ </div>
+</div>
+<?php $this->stopSection(); ?>
+
+<?php if (isset($_shouldextend[1])) { echo $this->runChild('layout'); } ?>

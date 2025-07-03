@@ -1,0 +1,28 @@
+@extends('layout')
+
+@section('titulo', 'Devoluciones')
+
+@section('contenido')
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <h2 class="text-center mb-4 text-blue">Política de Devoluciones</h2>
+            <p class="mb-4">
+                Tienes un plazo de 30 días naturales desde la recepción del pedido para realizar una devolución. El producto debe encontrarse en perfecto estado, sin signos de uso y con su embalaje original.
+            </p>
+            <p class="mb-4">
+                Para iniciar una devolución, solo tienes que escribirnos a nuestro correo indicando tu número de pedido, el producto que deseas devolver y el motivo de la devolución. Te enviaremos instrucciones detalladas.
+            </p>
+            <p class="mb-4">
+                Una vez recibido el producto y verificado su estado, procederemos a realizar el reembolso en el mismo método de pago utilizado en la compra, en un plazo máximo de 7 días laborables.
+            </p>
+            <p class="mb-4">
+                Los gastos de devolución corren a cargo del cliente, salvo en casos de productos defectuosos o errores en el envío, donde nosotros asumiremos el coste.
+            </p>
+            <p class="mb-4">
+                No se aceptarán devoluciones de productos personalizados o que hayan sido usados o lavados. Asegúrate de probarte los productos en casa con cuidado antes de decidir.
+            </p>
+        </div>
+    </div>
+</div>
+@endsection

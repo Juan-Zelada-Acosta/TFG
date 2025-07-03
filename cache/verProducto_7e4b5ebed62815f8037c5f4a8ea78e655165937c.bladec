@@ -1,0 +1,307 @@
+<?php $_shouldextend[1]=1; ?>
+
+<?php $this->startSection('contenido'); ?>
+<?php 
+use App\Core\Conexion;
+$conn = Conexion::getConexion();
+$idUsuario = $_SESSION['usuario']['id'] ?? null;
+ ?>
+
+<section class="py-5">
+ <div class="container">
+ <?php if($producto): ?>
+ <div class="row">
+ <div class="col-md-6 mb-4">
+ <img src="<?php echo \htmlentities($producto['imagen']??'', ENT_QUOTES, 'UTF-8', false); ?>" alt="<?php echo \htmlentities($producto['nombre']??'', ENT_QUOTES, 'UTF-8', false); ?>"
+ class="img-fluid w-100 border border-primary">
+ </div>
+
+ <div class="col-md-6">
+ <h2 class="text-blue"><?php echo \htmlentities($producto['nombre']??'', ENT_QUOTES, 'UTF-8', false); ?></h2>
+ <p class="fw-bold text-blue fs-5"><?php echo \htmlentities(number_format($producto['precio'], 2)??'', ENT_QUOTES, 'UTF-8', false); ?>€</p>
+
+ <?php 
+ $stockTotal = obtenerStockReal($producto['id'], $conn);
+ ?>
+
+ <?php if($stockTotal > 0): ?>
+ <form id="formCarrito">
+ <input type="hidden" name="id_producto" value="<?php echo \htmlentities($producto['id']??'', ENT_QUOTES, 'UTF-8', false); ?>">
+
+ <div class="mb-3">
+ <label for="talla" class="form-label">Selecciona una talla:</label>
+ <select name="talla" id="talla" class="form-select" required>
+ <option value="" disabled selected>Selecciona talla</option>
+ <?php $__currentLoopData = ['S', 'M', 'L', 'XL']; $this->addLoop($__currentLoopData);$this->getFirstLoop();
+ foreach($__currentLoopData as $talla): $loop = $this->incrementLoopIndices();  ?>
+ <?php 
+ $stockTalla = obtenerStockPorTalla($producto['id'], $talla, $conn);
+ $cantidadEnCarrito = 0;
+ if ($idUsuario) {
+ $stmt = $conn->prepare("SELECT cantidad FROM carrito WHERE id_usuario = ? AND id_producto = ? AND talla = ?");
+ $stmt->bind_param("iis", $idUsuario, $producto['id'], $talla);
+ $stmt->execute();
+ $res = $stmt->get_result();
+ $row = $res->fetch_assoc();
+ $cantidadEnCarrito = $row['cantidad'] ?? 0;
+ $stmt->close();
+ }
+ $disponible = $stockTalla - $cantidadEnCarrito;
+ ?>
+
+ <?php if($disponible > 0): ?>
+ <option value="<?php echo \htmlentities($talla??'', ENT_QUOTES, 'UTF-8', false); ?>"><?php echo \htmlentities($talla??'', ENT_QUOTES, 'UTF-8', false); ?> (<?php echo \htmlentities($disponible??'', ENT_QUOTES, 'UTF-8', false); ?> disponibles)</option>
+ <?php else: ?>
+ <option value="" disabled><?php echo \htmlentities($talla??'', ENT_QUOTES, 'UTF-8', false); ?> (agotado)</option>
+ <?php endif; ?>
+ <?php endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>
+ </select>
+ </div>
+
+ <div class="mb-3">
+ <label for="cantidad" class="form-label">Cantidad:</label>
+ <input type="number" name="cantidad" id="cantidad" value="1" min="1" class="form-control" required>
+ </div>
+
+ <button type="submit" class="btn btn-primary w-100">
+ <i class="fa fa-shopping-cart me-2"></i> Añadir al carrito
+ </button>
+ </form>
+ <?php else: ?>
+ <div class="alert alert-danger text-center mt-4">
+ <i class="fa fa-times-circle me-2"></i>Producto agotado
+ </div>
+ <?php endif; ?>
+
+ <div class="accordion mt-4" id="detallesAccordion">
+ <div class="accordion-item">
+ <h2 class="accordion-header" id="headingDetalles">
+ <button class="accordion-button" type="button" data-bs-toggle="collapse"
+ data-bs-target="#collapseDetalles" aria-expanded="true"
+ aria-controls="collapseDetalles">
+ Detalles del producto
+ </button>
+ </h2>
+ <div id="collapseDetalles" class="accordion-collapse collapse show"
+ aria-labelledby="headingDetalles">
+ <div class="accordion-body">
+ <?php echo \htmlentities($producto['descripcion']??'', ENT_QUOTES, 'UTF-8', false); ?>
+
+ </div>
+ </div>
+ </div>
+
+ <div class="accordion-item">
+ <h2 class="accordion-header" id="headingGuia">
+ <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+ data-bs-target="#collapseGuia" aria-expanded="false" aria-controls="collapseGuia">
+ Guía de tallas
+ </button>
+ </h2>
+ <div id="collapseGuia" class="accordion-collapse collapse" aria-labelledby="headingGuia">
+ <div class="accordion-body">
+ <h6 class="text-blue mb-3">Camisetas y Sudaderas</h6>
+ <table class="table table-bordered text-center mb-4">
+ <thead>
+ <tr>
+ <th>Talla</th>
+ <th>Pecho (cm)</th>
+ <th>Largo (cm)</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td>S</td>
+ <td>90-95</td>
+ <td>65</td>
+ </tr>
+ <tr>
+ <td>M</td>
+ <td>96-100</td>
+ <td>68</td>
+ </tr>
+ <tr>
+ <td>L</td>
+ <td>101-106</td>
+ <td>71</td>
+ </tr>
+ <tr>
+ <td>XL</td>
+ <td>107-112</td>
+ <td>74</td>
+ </tr>
+ </tbody>
+ </table>
+
+ <h6 class="text-blue mb-3">Pantalones</h6>
+ <table class="table table-bordered text-center mb-4">
+ <thead>
+ <tr>
+ <th>Talla</th>
+ <th>Cintura (cm)</th>
+ <th>Largo (cm)</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td>S</td>
+ <td>70-75</td>
+ <td>98</td>
+ </tr>
+ <tr>
+ <td>M</td>
+ <td>76-82</td>
+ <td>100</td>
+ </tr>
+ <tr>
+ <td>L</td>
+ <td>83-88</td>
+ <td>102</td>
+ </tr>
+ <tr>
+ <td>XL</td>
+ <td>89-95</td>
+ <td>104</td>
+ </tr>
+ </tbody>
+ </table>
+
+ <h6 class="text-blue mb-3">Calcetines</h6>
+ <table class="table table-bordered text-center">
+ <thead>
+ <tr>
+ <th>Talla</th>
+ <th>Equivalencia (EU)</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+ <td>S</td>
+ <td>36-38</td>
+ </tr>
+ <tr>
+ <td>M</td>
+ <td>39-41</td>
+ </tr>
+ <tr>
+ <td>L</td>
+ <td>42-44</td>
+ </tr>
+ <tr>
+ <td>XL</td>
+ <td>45-47</td>
+ </tr>
+ </tbody>
+ </table>
+
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <?php else: ?>
+ <div class="alert alert-danger text-center">Producto no encontrado.</div>
+ <?php endif; ?>
+ </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+ document.addEventListener("DOMContentLoaded", function() {
+ const form = document.getElementById("formCarrito");
+ const talla = document.getElementById("talla");
+ const cantidad = document.getElementById("cantidad");
+ const idProducto = document.querySelector("input[name='id_producto']").value;
+
+ form.addEventListener("submit", function(e) {
+ e.preventDefault();
+
+ const tallaSeleccionada = talla.value;
+ const cantidadSeleccionada = parseInt(cantidad.value);
+
+ if (!tallaSeleccionada) {
+ Swal.fire({
+ icon: 'warning',
+ title: 'Talla no seleccionada',
+ text: 'Selecciona una talla antes de continuar.'
+ });
+ return;
+ }
+
+ if (!cantidadSeleccionada || cantidadSeleccionada <= 0) {
+ Swal.fire({
+ icon: 'warning',
+ title: 'Cantidad inválida',
+ text: 'Introduce una cantidad válida.'
+ });
+ return;
+ }
+
+ Swal.fire({
+ title: '¿Agregar al carrito?',
+ html: `¿Deseas añadir <b>${cantidadSeleccionada}</b> unidad(es) de la talla <b>${tallaSeleccionada}</b> al carrito?`,
+ icon: 'question',
+ showCancelButton: true,
+ confirmButtonText: 'Sí, añadir',
+ cancelButtonText: 'Cancelar'
+ }).then((result) => {
+ if (result.isConfirmed) {
+ fetch('index.php?accion=addCarrito', {
+ method: 'POST',
+ headers: {
+ 'Content-Type': 'application/x-www-form-urlencoded'
+ },
+ body: new URLSearchParams({
+ id_producto: idProducto,
+ talla: tallaSeleccionada,
+ cantidad: cantidadSeleccionada
+ })
+ })
+ .then(response => response.text())
+ .then(resultado => {
+ if (resultado.trim() === 'ok') {
+ Swal.fire({
+ icon: 'success',
+ title: '¡Producto añadido!',
+ text: 'El producto se ha añadido correctamente al carrito.',
+ timer: 2000,
+ showConfirmButton: false
+ });
+ if (typeof actualizarContadorCarrito === 'function') {
+ actualizarContadorCarrito();
+ }
+ } else if (resultado.trim() === 'stock_insuficiente') {
+ Swal.fire({
+ icon: 'error',
+ title: 'Stock insuficiente',
+ text: 'Ya tienes demasiadas unidades de esta talla en el carrito.'
+ });
+ } else if (resultado.trim() === 'login_required') {
+ Swal.fire({
+ icon: 'warning',
+ title: 'Inicia sesión',
+ text: 'Debes iniciar sesión para añadir productos al carrito.'
+ });
+ } else {
+ Swal.fire({
+ icon: 'error',
+ title: 'Error',
+ text: 'No se pudo añadir al carrito. Inténtalo más tarde.'
+ });
+ }
+ })
+ .catch(() => {
+ Swal.fire({
+ icon: 'error',
+ title: 'Error',
+ text: 'No se pudo conectar con el servidor.'
+ });
+ });
+ }
+ });
+ });
+ });
+</script>
+<?php $this->stopSection(); ?>
+<?php if (isset($_shouldextend[1])) { echo $this->runChild('layout'); } ?>

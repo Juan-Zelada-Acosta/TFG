@@ -1,0 +1,97 @@
+@extends('layout')
+
+@section('titulo', 'Mi Cuenta')
+
+@section('contenido')
+{{-- SweetAlert de cambio de contraseña --}}
+@if(isset($mensaje) && $mensaje === 'cambiada')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'success',
+            title: 'Contraseña cambiada',
+            text: 'Tu contraseña se ha actualizado correctamente.',
+            confirmButtonColor: '#0085B4'
+        });
+    });
+</script>
+@elseif(isset($mensaje) && $mensaje === 'error')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'La contraseña actual no es correcta.',
+            confirmButtonColor: '#0085B4'
+        });
+    });
+</script>
+@endif
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+
+            <h2 class="text-center mb-4 text-blue">Mi Cuenta</h2>
+
+            <div class="mb-4 text-center">
+                <p class="fw-semibold mb-1">Hola, <strong>{{ $_SESSION['usuario']['nombre'] }}</strong></p>
+                <p class="mb-3">Este es tu panel personal. Aquí podrás revisar tu información, cambiar tu contraseña o
+                    eliminar tu cuenta si lo deseas.</p>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">Nombre</label>
+                <input type="text" class="form-control" value="{{ $_SESSION['usuario']['nombre'] }}" disabled>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Correo electrónico</label>
+                <input type="email" class="form-control" value="{{ $_SESSION['usuario']['email'] }}" disabled>
+            </div>
+
+            <div class="d-flex justify-content-center gap-3 mb-5">
+                <a href="index.php?accion=historial" class="btn btn-primary">Ver historial de pedidos</a>
+                <form id="formEliminarCuenta" method="POST" action="index.php?accion=eliminarCuenta">
+                    <button type="button" class="btn btn-danger" onclick="confirmarEliminarCuenta()">Eliminar cuenta</button>
+                </form>
+
+            </div>
+
+            <hr class="my-5">
+
+            <h4 class="text-center text-blue mb-4">Cambiar contraseña</h4>
+            <form action="index.php?accion=cambiarPassword" method="POST">
+                <div class="mb-3">
+                    <label for="actual" class="form-label">Contraseña actual</label>
+                    <input type="password" class="form-control" id="actual" name="actual"
+                        placeholder="Introduce tu contraseña actual" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nueva" class="form-label">Nueva contraseña</label>
+                    <input type="password" class="form-control" id="nueva" name="nueva"
+                        placeholder="Introduce una nueva contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-outline-primary w-100">Cambiar contraseña</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function confirmarEliminarCuenta() {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esta acción eliminará tu cuenta permanentemente.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('formEliminarCuenta').submit();
+            }
+        });
+    }
+</script>
+@endsection

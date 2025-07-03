@@ -1,0 +1,114 @@
+<?php $_shouldextend[1]=1; ?>
+
+<?php $this->startSection('contenido'); ?>
+ <section class="py-5">
+ <div class="container">
+ <h2 class="mb-4 text-center text-blue">Editar Producto</h2>
+
+ <form action="index.php?accion=guardarEdicion&id=<?php echo \htmlentities($producto['id']??'', ENT_QUOTES, 'UTF-8', false); ?>" method="POST" enctype="multipart/form-data" class="row g-3">
+ <div class="col-md-6">
+ <label for="nombre" class="form-label">Nombre</label>
+ <input type="text" name="nombre" id="nombre" class="form-control" value="<?php echo \htmlentities($producto['nombre']??'', ENT_QUOTES, 'UTF-8', false); ?>" required>
+ </div>
+
+ <div class="col-md-6">
+ <label for="precio" class="form-label">Precio</label>
+ <input type="number" name="precio" id="precio" class="form-control" step="0.01" value="<?php echo \htmlentities($producto['precio']??'', ENT_QUOTES, 'UTF-8', false); ?>" required>
+ </div>
+
+ <div class="col-md-6">
+ <label for="categoria" class="form-label">Categoría</label>
+ <select name="categoria" id="categoria" class="form-select" required>
+ <option value="camisetas" <?php echo \htmlentities($producto['categoria'] == 'camisetas' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Camisetas</option>
+ <option value="sudaderas" <?php echo \htmlentities($producto['categoria'] == 'sudaderas' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Sudaderas</option>
+ <option value="pantalones" <?php echo \htmlentities($producto['categoria'] == 'pantalones' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Pantalones</option>
+ <option value="calcetines" <?php echo \htmlentities($producto['categoria'] == 'calcetines' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Calcetines</option>
+ </select>
+ </div>
+
+ <div class="col-md-6">
+ <label for="coleccion" class="form-label">Colección</label>
+ <select name="coleccion" id="coleccion" class="form-select" required>
+ <option value="nueva" <?php echo \htmlentities($producto['coleccion'] == 'nueva' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Nueva</option>
+ <option value="rebajas" <?php echo \htmlentities($producto['coleccion'] == 'rebajas' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Rebajas</option>
+ <option value="estandar" <?php echo \htmlentities($producto['coleccion'] == 'estandar' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Estándar</option>
+ </select>
+ </div>
+
+ <div class="col-md-12">
+ <label for="descripcion" class="form-label">Descripción</label>
+ <textarea name="descripcion" id="descripcion" class="form-control" rows="4" required><?php echo \htmlentities($producto['descripcion']??'', ENT_QUOTES, 'UTF-8', false); ?></textarea>
+ </div>
+
+ <div class="col-md-6">
+ <label for="imagen" class="form-label">Imagen nueva (opcional)</label>
+ <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*">
+ </div>
+
+ <div class="col-md-6">
+ <label class="form-label">Imagen actual</label><br>
+ <img src="<?php echo \htmlentities($producto['imagen']??'', ENT_QUOTES, 'UTF-8', false); ?>" alt="Imagen actual" class="img-fluid" style="max-height: 120px;">
+ </div>
+
+ <?php /* Stock por talla */ ?>
+ <?php $__currentLoopData = ['S', 'M', 'L', 'XL']; $this->addLoop($__currentLoopData);$this->getFirstLoop();
+ foreach($__currentLoopData as $talla): $loop = $this->incrementLoopIndices();  ?>
+ <div class="col-md-3">
+ <label for="stock_<?php echo \htmlentities(strtolower($talla)??'', ENT_QUOTES, 'UTF-8', false); ?>" class="form-label">Stock <?php echo \htmlentities($talla??'', ENT_QUOTES, 'UTF-8', false); ?></label>
+ <input type="number" name="stock_<?php echo \htmlentities(strtolower($talla)??'', ENT_QUOTES, 'UTF-8', false); ?>" class="form-control"
+ value="<?php echo \htmlentities($producto['stock_' . strtolower($talla)] ?? 0??'', ENT_QUOTES, 'UTF-8', false); ?>" min="0">
+ </div>
+ <?php endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>
+
+ <div class="col-12 text-center mt-4">
+ <button type="submit" class="btn btn-primary px-5">Guardar cambios</button>
+ </div>
+ </form>
+
+ <?php if(isset($_GET['success']) && $_GET['success'] === '1'): ?>
+ <script>
+ Swal.fire({
+ icon: 'success',
+ title: 'Producto actualizado',
+ text: 'Los cambios se han guardado correctamente.',
+ confirmButtonColor: '#0085B4'
+ });
+ </script>
+ <?php endif; ?>
+
+ <?php if(isset($_GET['error'])): ?>
+ <script>
+ document.addEventListener('DOMContentLoaded', function () {
+ let msg = '';
+ switch ("<?php echo \htmlentities($_GET['error']??'', ENT_QUOTES, 'UTF-8', false); ?>") {
+ case 'campos':
+ msg = 'Debes completar todos los campos obligatorios.';
+ break;
+ case 'tipo':
+ msg = 'El tipo de imagen no es válido.';
+ break;
+ case 'tamano':
+ msg = 'La imagen no puede superar los 2MB.';
+ break;
+ case 'subida':
+ msg = 'Error al subir la imagen.';
+ break;
+ default:
+ msg = 'Ha ocurrido un error inesperado.';
+ }
+
+ Swal.fire({
+ icon: 'error',
+ title: 'Error al guardar',
+ text: msg,
+ confirmButtonColor: '#0085B4'
+ });
+ });
+ </script>
+ <?php endif; ?>
+ </div>
+ </section>
+<?php $this->stopSection(); ?>
+
+
+<?php if (isset($_shouldextend[1])) { echo $this->runChild('layout'); } ?>
